@@ -23,13 +23,18 @@
 import logging
 import subprocess
 import os
+import sys
 
+import psycopg2
 import click
 import click_odoo
 
+from odoo.api import Environment
 from contextlib import contextmanager
 from click_odoo import odoo
 from click_odoo.config import OdooConfig
+
+from .format import process
 
 # from utils import manifest, gitutils
 
@@ -114,6 +119,8 @@ class OdooConfigExtended(OdooConfig):
         include = self.args[1]
         exclude = self.args[2]
         odoo_args.extend(['--test-enable'])
+        odoo_args.extend(['--log-db'])
+        odoo_args.extend(['--log-db-level', 'warning'])
         if self.kwargs.get('tags'):
             odoo_args.extend(['--test-tags', self.kwargs.get('tags')])
         changed = _get_changed_modules_from_git(auto) if auto else set()
@@ -129,14 +136,23 @@ click_odoo.config.OdooConfig = OdooConfigExtended
 
 
 @contextmanager
-def OdooCustomEnvironment(database, rollback=False):
+def OdooTestExecution(database, rollback=False):
     _ = rollback
     yield odoo.service.server.start(preload=database, stop=True)
+
+    with psycopg2.connect(dbname=database) as conn:
+        with conn.cursor() as cr:
+            cr.execute("SELECT * FROM ir_logging")
+            logs = cr.fetchall()
+    conn.close()
+    success = process(logs)
+    if not success:
+        sys.exit(1)
 
 
 @click.command()
 @click_odoo.env_options(default_log_level='warn', with_rollback=False,
-                        environment_factory=OdooCustomEnvironment)
+                        environment_factory=OdooTestExecution)
 @click.option('--git-dir', default=False,
               help="Autodetect changed modules (through git).")
 @click.option('--include', '-i', multiple=True,
