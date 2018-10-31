@@ -1,7 +1,5 @@
-
-import re
-
 import logging
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -16,32 +14,32 @@ def process(logs):
 
 
 
-  | {name}
+  | {_name}
   | ---------------------------------------
-  | {path}:{line}
-  | {func}
+  | {_path}:{_line}
+  | {_func}
   | _______________________________________
 
 {message}
 """
-    file_regex=r'File ".*?odoo'
+    file_regex = r'File ".*?odoo'
 
-    for (_, _, _, name, level, message, path, line, func) in logs:
+    for (_, _, _, _name, level, message, _path, _line, _func) in logs:
         message.replace
-        if 'FAILED' in message:
+        if "FAILED" in message:
             failed += 1
-        if level == 'WARNING':
+        if level == "WARNING":
             message = re.sub(file_regex, 'File "odoo', message)
             warnings.append(incident_fmt.format(**locals()))
-        if level == 'ERROR':
+        if level == "ERROR":
             message = re.sub(file_regex, 'File "odoo', message)
             errors.append(incident_fmt.format(**locals()))
-        if level == 'CRITICAL':
+        if level == "CRITICAL":
             message = re.sub(file_regex, 'File "odoo', message)
             critical.append(incident_fmt.format(**locals()))
 
-
-    _logger.info("""
+    _logger.info(
+        """
 
 
 Summary:
@@ -63,9 +61,14 @@ Errors:
 Critical:
 ======================================================
 %s
-""", len(warnings), len(errors), len(critical), len(failed),
-                 ('').join(warnings),
-                 ('').join(errors),
-                 ('').join(critical))
+""",
+        len(warnings),
+        len(errors),
+        len(critical),
+        len(failed),
+        ("").join(warnings),
+        ("").join(errors),
+        ("").join(critical),
+    )
 
     return not bool(len(errors) or len(critical) or failed)

@@ -24,8 +24,10 @@
 
 import click
 from click.testing import CliRunner
-# from click_odoo import odoo
 
 from src.tester import main
+
+# from click_odoo import odoo
+
 
 # from ..utils import manifest, gitutils
