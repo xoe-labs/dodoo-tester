@@ -3,10 +3,10 @@ cache: pip
 addons:
   postgresql: '9.6'
 stages:
-  - name: linting
-  - name: test
-  - name: deploy
-    if: tag IS present
+- name: linting
+- name: test
+- name: deploy
+  if: tag IS present
 python:
 - 2.7
 - 3.5
@@ -19,6 +19,8 @@ env:
   - ODOO="11.0"
   - ODOO="12.0"
   - ODOO="master"
+  global:
+    secure: j2Tr3Bknc/NR3LjCj2Zu85Svw2h5xSrtl3go69DNgucPwKO1u1WeofZrifeTaaGiIHMf+kzBC5NgItzC+oNUJ5fuKU5ebC1q4SCEP+e2aQI3pQYpbVaelma1bd8e7iMIPeELrGxhBtNe1Asi05S/BAHztXAATC/p8BZk0A2vaMlF68qdC9HeLGhFVxlduWup1G6GOQIL9+YVlo5LGEAYIZly1I9QqIYAxC6fre5dQBI3xYQgcot/fb6t2x2uGh6AH39PVhNd6FmmY8vFQgL+RQ/h8EM0szAsqx6sDs+qZ8oMitxggwHr9YF9cr/cYwlgNVwu2yysIwhetQ2516i6M2TDdYtL5YACkySHixTksS5J+VlDnv9V1lbomckbT86Xpp7YrLTA95HdVQIwp6/aeyh+FcGnzE7VjuccBorUdcTMslbdcTU/gOatpyZStwh3GQXKHaFZBVJASSEC8QFDSoEvPet/1XFlOxHbEiXRoTMLUIG8ts4sxbG+AOq6rAgcB0rQ1CDI6QKtQ5Qgibz3Po7R37EGAEvV5XlQT4tKqFyE0SCKXEU+Nh83RKk0aCHXP8xd9lQMcaXi5bLKTOBaFbFkWXYxqFEVbkuhdeOuNS/Yi49qaK00Rd3jN/awPOd+lTDnCnmUXIltnQj5zEUL3t4ONxVS+4Pq56ALYOKVvU0=
 matrix:
   exclude:
   - env: ODOO="8.0"
@@ -40,12 +42,12 @@ matrix:
   - env: ODOO="master"
     python: 2.7
 install:
-  - pip install tox-travis
-  - pip install codecov
+- pip install tox-travis
+- pip install codecov
 script:
-  - tox
+- tox
 after_success:
-  - codecov
+- codecov
 jobs:
   include:
   - stage: linting
@@ -54,3 +56,15 @@ jobs:
   - stage: linting
     python: 3.6
     env: TOXENV=check_readme
+  - stage: deploy
+    python: 3.6
+    deploy:
+      provider: pypi
+      user: xoe-labs
+      passwrod:
+        secure: "$PYPI_TOKEN"
+      distributions: sdist bdist_wheel
+      skip_upload_docs: true
+      on:
+        repo: xoe-labs/click-odoo-tester
+        tags: true
