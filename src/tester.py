@@ -23,14 +23,12 @@
 import logging
 import os
 import subprocess
-import sys
 from contextlib import contextmanager
 
 import click
-import click_odoo
 import psycopg2
-from click_odoo import odoo
-from click_odoo.config import OdooConfig
+from click_odoo import CommandWithOdooEnv, odoo
+from future.types import str
 
 from .format import process
 
@@ -53,7 +51,7 @@ class Git(object):
             res = subprocess.check_output(cmd)
         except subprocess.CalledProcessError:
             res = None
-        if isinstance(res, string_types):
+        if isinstance(res, str):
             res = res.strip("\n")
         return res
 
@@ -111,46 +109,57 @@ def _get_changed_modules_from_git(git_dir, base_ref="origin/master"):
     return set(res)
 
 
-class OdooConfigExtended(OdooConfig):
-    def _parse(self):
-        odoo_args = super(OdooConfigExtended, self)._parse()
-        auto = self.args[0]
-        include = self.args[1]
-        exclude = self.args[2]
+class CommandWithOdooEnvExtended(CommandWithOdooEnv):
+    def _parse_env_args(self, ctx):
+        odoo_args = super(CommandWithOdooEnvExtended, self)._parse_env_args(ctx)
+
+        def _get(flag):
+            return ctx.params.get(flag)
+
+        # fmt: off
+        # Always present params
+        git_dir      = _get("git_dir")       # noqa
+        include      = _get("include")       # noqa
+        exclude      = _get("exclude")       # noqa
+        tags         = _get("tags")          # noqa
+        # fmt: on
+
+        if tags:
+            odoo_args.extend(["--test-tags", tags])
         odoo_args.extend(["--test-enable"])
         odoo_args.extend(["--log-db"])
         odoo_args.extend(["--log-db-level", "warning"])
-        if self.kwargs.get("tags"):
-            odoo_args.extend(["--test-tags", self.kwargs.get("tags")])
-        changed = _get_changed_modules_from_git(auto) if auto else set()
+
+        changed = _get_changed_modules_from_git(git_dir) if git_dir else set()
         modules = (changed | set(include)) - set(exclude)
+
         if not modules:
-            raise "One module minimum."
+            click.echo("No module to test. Exiting...")
+            click.get_current_context().exit()
         odoo_args.extend(["-i", ",".join(modules)])
         odoo_args.extend(["-u", ",".join(modules)])
         return odoo_args
 
 
-click_odoo.config.OdooConfig = OdooConfigExtended
-
-
 @contextmanager
-def OdooTestExecution(database, rollback=False):
-    yield odoo.service.server.start(preload=database, stop=True)
+def OdooTestExecution(self):
+    yield odoo.service.server.start(preload=self.database, stop=True)
+    ctx = click.get_current_context()
 
-    with psycopg2.connect(dbname=database) as conn:
+    with psycopg2.connect(dbname=self.database) as conn:
         with conn.cursor() as cr:
             cr.execute("SELECT * FROM ir_logging")
             logs = cr.fetchall()
     conn.close()
     success = process(logs)
     if not success:
-        sys.exit(1)
+        ctx.fail("Tests failed")
 
 
-@click.command()
-@click_odoo.env_options(
-    default_log_level="warn", with_rollback=False, environment_factory=OdooTestExecution
+@click.command(
+    cls=CommandWithOdooEnvExtended,
+    env_options={"with_rollback": False, "environment_manager": OdooTestExecution},
+    default_overrides={"log_level": "warn"},
 )
 @click.option(
     "--git-dir", default=False, help="Autodetect changed modules (through git)."

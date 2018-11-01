@@ -22,10 +22,10 @@
 
 # import mock
 
-import click
-from click.testing import CliRunner
+# import click
+# from click.testing import CliRunner
 
-from src.tester import main
+# from src.tester import main
 
 # from click_odoo import odoo
 
