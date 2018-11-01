@@ -111,10 +111,16 @@ def _get_changed_modules_from_git(git_dir, base_ref="origin/master"):
 
 class CommandWithOdooEnvExtended(CommandWithOdooEnv):
     def _parse_env_args(self, ctx):
-        odoo_args = super(CommandWithOdooEnvExtended, self)._parse_env_args(ctx)
-
         def _get(flag):
             return ctx.params.get(flag)
+
+        database = _get("database")
+        if not database:
+            click.BadParameter(
+                "The --database parameter is required for testing. You cannot "
+                "specify the database in the config file."
+            )
+        odoo_args = super(CommandWithOdooEnvExtended, self)._parse_env_args(ctx)
 
         # fmt: off
         # Always present params
@@ -126,8 +132,7 @@ class CommandWithOdooEnvExtended(CommandWithOdooEnv):
 
         if tags:
             odoo_args.extend(["--test-tags", tags])
-        odoo_args.extend(["--test-enable"])
-        odoo_args.extend(["--log-db"])
+        odoo_args.extend(["--log-db", database])
         odoo_args.extend(["--log-db-level", "warning"])
 
         changed = _get_changed_modules_from_git(git_dir) if git_dir else set()
@@ -138,17 +143,18 @@ class CommandWithOdooEnvExtended(CommandWithOdooEnv):
             click.get_current_context().exit()
         odoo_args.extend(["-i", ",".join(modules)])
         odoo_args.extend(["-u", ",".join(modules)])
+        odoo_args.extend(["--test-enable"])
         return odoo_args
 
 
 @contextmanager
 def OdooTestExecution(self):
-    yield odoo.service.server.start(preload=self.database, stop=True)
+    yield odoo.service.server.start(preload=[self.database], stop=True)
     ctx = click.get_current_context()
 
     with psycopg2.connect(dbname=self.database) as conn:
         with conn.cursor() as cr:
-            cr.execute("SELECT * FROM ir_logging")
+            cr.execute("SELECT name, level, message, path, func, line FROM ir_logging")
             logs = cr.fetchall()
     conn.close()
     success = process(logs)
@@ -158,7 +164,12 @@ def OdooTestExecution(self):
 
 @click.command(
     cls=CommandWithOdooEnvExtended,
-    env_options={"with_rollback": False, "environment_manager": OdooTestExecution},
+    env_options={
+        "with_rollback": False,
+        "database_required": True,
+        "database_must_exist": False,
+        "environment_manager": OdooTestExecution,
+    },
     default_overrides={"log_level": "warn"},
 )
 @click.option(
@@ -173,9 +184,10 @@ def OdooTestExecution(self):
     "a change has been detected.",
 )
 @click.option("--tags", "-t", multiple=True, help="Filter on those test tags.")
-def main(env, auto, include, exclude, tags):
+def main(env, git_dir, include, exclude, tags):
     """ Run Odoo tests through modern pytest instead of unittest.
     """
+    pass
 
 
 if __name__ == "__main__":  # pragma: no cover

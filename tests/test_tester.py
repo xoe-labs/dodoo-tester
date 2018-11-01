@@ -23,11 +23,30 @@
 # import mock
 
 # import click
-# from click.testing import CliRunner
+from click.testing import CliRunner
 
-# from src.tester import main
+from src.tester import main
 
 # from click_odoo import odoo
 
 
 # from ..utils import manifest, gitutils
+
+
+def test_execute_crm_tests(odoodb, odoocfg):
+    result = CliRunner().invoke(
+        main,
+        [
+            "--config",
+            odoocfg,
+            "--database",
+            odoodb,
+            "--include",
+            "crm",
+            "--include",
+            "project",
+            "--exclude",
+            "project",
+        ],
+    )
+    assert result.exit_code == 0
