@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# This file is part of the click-odoo-tester (R) project.
+# This file is part of the dodoo-tester (R) project.
 # Copyright (c) 2018 XOE Corp. SAS
 # Authors: David Arnold, et al.
 #

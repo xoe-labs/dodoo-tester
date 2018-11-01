@@ -1,5 +1,5 @@
-click-odoo-tester
-==================
+dodoo-tester
+============
 
 .. image:: https://img.shields.io/badge/license-LGPL--3-blue.svg
    :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
@@ -7,7 +7,7 @@ click-odoo-tester
 .. image:: https://badge.fury.io/py/click-odoo-{{ PROJECT }}.svg
     :target: http://badge.fury.io/py/click-odoo-{{ PROJECT }}
 
-``click-odoo-tester`` is a set of useful Odoo maintenance functions.
+``dodoo-tester`` is a set of useful Odoo maintenance functions.
 They are available as CLI scripts (based on click-odoo_), as well
 as composable python functions.
 

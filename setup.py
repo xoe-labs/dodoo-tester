@@ -8,8 +8,8 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 setup(
-    name="click-odoo-tester",
-    description="click-odoo tester script",
+    name="dodoo-tester",
+    description="dodoo tester script",
     long_description="\n".join(
         (
             open(os.path.join(here, "README.rst")).read(),
@@ -26,7 +26,7 @@ setup(
     license="LGPLv3+",
     author="XOE Labs",
     author_email="info@xoe.solutions",
-    url="http://github.com/xoe-labs/click-odoo-tester",
+    url="http://github.com/xoe-labs/dodoo-tester",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -40,6 +40,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        click-odoo-tester=src.tester:main
+        dodoo-tester=src.tester:main
     """,
 )
