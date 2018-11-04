@@ -56,8 +56,12 @@ Credits
 Contributors:
 
 - David Arnold (XOE_)
+- Moises Lopez (VAUXOO_)
+- Jesus Zapata (JZGITHUB_)
 
 .. _XOE: https://xoe.solutions
+.. _VAUXOO: https://vauxoo.com
+.. _JZGITHUB: https://github.com/JesusZapata
 
 Maintainer
 ~~~~~~~~~~
