@@ -45,8 +45,8 @@ Useful links
 ~~~~~~~~~~~~
 
 - pypi page: https://pypi.org/project/dodoo-tester
-- code repository: https://github.com//dodoo-tester
-- report issues at: https://github.com//dodoo-tester/issues
+- code repository: https://github.com/xoe-labs/dodoo-tester
+- report issues at: https://github.com/xoe-labs/dodoo-tester/issues
 
 .. _click-odoo: https://pypi.python.org/pypi/click-odoo
 
