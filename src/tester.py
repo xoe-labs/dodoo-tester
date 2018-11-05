@@ -26,7 +26,7 @@ import logging
 import os
 import subprocess
 from builtins import str, super
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 
 import click
 import psycopg2
@@ -155,14 +155,20 @@ class CommandWithOdooEnvExtended(CommandWithOdooEnv):
 
 @contextmanager
 def OdooTestExecution(self):
-    yield odoo.service.server.start(preload=[self.database], stop=True)
-    ctx = click.get_current_context()
-
-    with psycopg2.connect(dbname=self.database) as conn:
-        with conn.cursor() as cr:
-            cr.execute("SELECT name, level, message, path, func, line FROM ir_logging")
+    try:
+        yield odoo.service.server.start(preload=[self.database], stop=True)
+    finally:
+        with closing(
+            psycopg2.connect(dbname=self.database)
+        ) as conn, conn.cursor() as cr:
+            cr.execute(
+                """SELECT name, level, message, path, func, line
+                          FROM ir_logging"""
+            )
             logs = cr.fetchall()
-    conn.close()
+            odoo.service.db._drop_conn(cr, self.database)
+
+    ctx = click.get_current_context()
     success = process(logs)
     if not success:
         ctx.fail("Tests failed")
