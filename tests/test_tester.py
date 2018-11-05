@@ -44,9 +44,9 @@ def test_execute_crm_tests(odoodb, odoocfg):
         main,
         [
             "--config",
-            odoocfg,
+            str(odoocfg),
             "--database",
-            odoodb,
+            str(odoodb),
             "--include",
             "crm",
             "--include",
