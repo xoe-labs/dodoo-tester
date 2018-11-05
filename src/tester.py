@@ -20,17 +20,23 @@
 # along with this library; if not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import logging
 import os
 import subprocess
+from builtins import str, super
 from contextlib import contextmanager
 
 import click
 import psycopg2
 from click_odoo import CommandWithOdooEnv, odoo
-from future.types import str
+from future import standard_library
 
 from .format import process
+
+standard_library.install_aliases()
+
 
 # from utils import manifest, gitutils
 

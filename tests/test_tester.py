@@ -23,9 +23,15 @@
 # import mock
 
 # import click
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from click.testing import CliRunner
+from future import standard_library
 
 from src.tester import main
+
+standard_library.install_aliases()
+
 
 # from click_odoo import odoo
 

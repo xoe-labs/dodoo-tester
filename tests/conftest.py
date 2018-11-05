@@ -1,5 +1,4 @@
-# Copyright 2018 ACSONE SA/NV (<http://acsone.eu>)
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 import os.path as path
@@ -8,6 +7,14 @@ import textwrap
 
 import pytest
 from click_odoo import odoo, odoo_bin
+from future import standard_library
+
+# Copyright 2018 ACSONE SA/NV (<http://acsone.eu>)
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+
+
+standard_library.install_aliases()
+
 
 # This hack is necessary because the way CliRunner patches
 # stdout is not compatible with the Odoo logging initialization

@@ -1,7 +1,13 @@
 #!/usr/bin/env python
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
 import subprocess
 import sys
+
+from future import standard_library
+
+standard_library.install_aliases()
 
 odoo_branch = sys.argv[1]
 odoo_dir = sys.argv[2]

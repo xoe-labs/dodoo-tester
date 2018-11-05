@@ -1,6 +1,13 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import logging
 import re
 import textwrap
+from builtins import range
+
+from future import standard_library
+
+standard_library.install_aliases()
 
 _logger = logging.getLogger(__name__)
 
