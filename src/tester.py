@@ -111,7 +111,10 @@ def _get_changed_modules_from_git(git_dir, base_ref="origin/master"):
     changed_paths = Git(git_dir).get_changed_paths(base_ref)
     res = []
     for path in changed_paths:
-        res.append(os.path.basename(odoo.modules.module.get_module_root(path)))
+        module_root = odoo.modules.module.get_module_root(path)
+        if not module_root:
+            continue
+        res.append(os.path.basename(module_root))
     return set(res)
 
 
@@ -130,7 +133,7 @@ class CommandWithOdooEnvExtended(CommandWithOdooEnv):
 
         # fmt: off
         # Always present params
-        git_dir      = _get("git_dir")       # noqa
+        git_dir, ref = _get("git_dir")       # noqa
         include      = _get("include")       # noqa
         exclude      = _get("exclude")       # noqa
         tags         = _get("tags")          # noqa
@@ -141,7 +144,7 @@ class CommandWithOdooEnvExtended(CommandWithOdooEnv):
         odoo_args.extend(["--log-db", database])
         odoo_args.extend(["--log-db-level", "warning"])
 
-        changed = _get_changed_modules_from_git(git_dir) if git_dir else set()
+        changed = _get_changed_modules_from_git(git_dir, ref) if git_dir else set()
         modules = (changed | set(include)) - set(exclude)
 
         if not modules:
@@ -185,7 +188,11 @@ def OdooTestExecution(self):
     default_overrides={"log_level": "warn"},
 )
 @click.option(
-    "--git-dir", default=False, help="Autodetect changed modules (through git)."
+    "--git-dir",
+    default=(None, None),
+    nargs=2,
+    type=(click.Path(), str),
+    help="Autodetect changed modules (through git).",
 )
 @click.option("--include", "-i", multiple=True, help="Force test run on those modules.")
 @click.option(
