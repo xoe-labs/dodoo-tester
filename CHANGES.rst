@@ -5,6 +5,10 @@ Future (?)
 ----------
 - pytest tools for BDD
 
+0.5.4 (2018-12-05)
+------------------
+- Add addons-path option
+
 0.5.3 (2018-12-04)
 --------------------
 - Improve 0.5.2 fix: generically use bytes for py3 and str for py2 envs

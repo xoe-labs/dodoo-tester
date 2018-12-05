@@ -188,6 +188,7 @@ def OdooTestExecution(self):
     cls=CommandWithOdooEnvExtended,
     env_options={
         "with_rollback": False,
+        "with_addons_path": True,
         "database_required": True,
         "database_must_exist": False,
         "environment_manager": OdooTestExecution,
