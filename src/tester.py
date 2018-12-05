@@ -65,7 +65,7 @@ class Git(object):
         """ Fetches a remote ref, independent of current refspec config """
         if "/" not in ref:
             return
-        original = self.run(["config", "--get", "remote.origin.fetch"])
+        original = self.run(["config", "--get", "remote.origin.fetch"]).rstrip("\n")
         parts = ref.split("/", 1)
         remote = parts[0]
         ref_branch = parts[1]

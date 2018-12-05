@@ -5,6 +5,13 @@ Future (?)
 ----------
 - pytest tools for BDD
 
+0.5.2 (2018-12-04)
+--------------------
+- Origin refspec fix: during fetching the origin, the refspec was read and
+  temporarliy stored. This is because we need to override narrowed CI induced
+  refspecs in some cases. However, it was read with a newline caracter, which
+  then was written back corrupting the git repository.
+
 0.5.1 (2018-12-04)
 --------------------
 - First PyPI release
