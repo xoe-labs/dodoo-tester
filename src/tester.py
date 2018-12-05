@@ -57,29 +57,24 @@ class Git(object):
             res = subprocess.check_output(cmd)
         except subprocess.CalledProcessError:
             res = None
+        # Python 2.7
         if isinstance(res, str):
             res = res.strip("\n")
+        # Python 3.X
+        if isinstance(res, bytes):
+            res = res.strip(b"\n")
         return res
 
     def fetch_remote(self, ref):
         """ Fetches a remote ref, independent of current refspec config """
         if "/" not in ref:
             return
-        original = self.run(["config", "--get", "remote.origin.fetch"]).rstrip("\n")
         parts = ref.split("/", 1)
         remote = parts[0]
         ref_branch = parts[1]
-        self.run(
-            [
-                "config",
-                "remote.origin.fetch",
-                "+refs/heads/{ref_branch}:refs/remotes/{remote}/{ref_branch}".format(
-                    **locals()
-                ),
-            ]
-        )
-        self.run(["fetch"] + parts)
-        self.run(["config", "remote.origin.fetch", original])
+        refmap_option = "--refmap=+refs/heads/{ref_branch}:"
+        "refs/remotes/{remote}/{ref_branch}".format(**locals())
+        self.run(["fetch", refmap_option] + parts)
 
     def get_changed_paths(self, base_ref="HEAD"):
         """Get name of items changed in self.git_dir
