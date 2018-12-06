@@ -156,9 +156,16 @@ def OdooTestExecution(self):
     try:
         yield odoo.service.server.start(preload=[self.database], stop=True)
     finally:
-        with closing(
-            psycopg2.connect(dbname=self.database)
-        ) as conn, conn.cursor() as cr:
+        connection = {"dbname": self.database}
+        if odoo.tools.config["db_host"]:
+            connection.update({"host": odoo.tools.config["db_host"]})
+        if odoo.tools.config["db_port"]:
+            connection.update({"port": odoo.tools.config["db_port"]})
+        if odoo.tools.config["db_user"]:
+            connection.update({"user": odoo.tools.config["db_user"]})
+        if odoo.tools.config["db_password"]:
+            connection.update({"password": odoo.tools.config["db_password"]})
+        with closing(psycopg2.connect(**connection)) as conn, conn.cursor() as cr:
             cr.execute(
                 """SELECT name, level, message, path, func, line
                           FROM ir_logging"""
