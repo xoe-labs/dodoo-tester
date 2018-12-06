@@ -50,8 +50,15 @@ def process(logs):
             )
             return wrapper.wrap(re.sub(file_regex, 'File "odoo', msg))
 
+    consolidated_logs = {}
     for (_name, level, message, _path, _func, _line) in logs:
-        message.replace
+        key = (_name, level, _path, _func, _line)
+        if key not in consolidated_logs:
+            consolidated_logs[key] = message
+        else:
+            consolidated_logs[key] = consolidated_logs[key] + "\n" + message
+
+    for (_name, level, _path, _func, _line), message in consolidated_logs.items():
         if "FAILED" in message:
             failed += 1
         if level == "WARNING":
@@ -64,6 +71,7 @@ def process(logs):
             message = _process_msg(message)
             critical.append(incident_fmt.format(**locals()))
 
+    # Summary Format
     summary_fmt = COLOR_PATTERN % (
         30 + CYAN,
         40 + DEFAULT,
@@ -77,6 +85,7 @@ def process(logs):
         ),
     )
 
+    # Warnings Format
     warnings_fmt = (
         COLOR_PATTERN
         % (
@@ -93,6 +102,8 @@ def process(logs):
         if len(warnings)
         else ""
     )
+
+    # Errors Format
     errors_fmt = (
         COLOR_PATTERN
         % (
@@ -109,6 +120,8 @@ def process(logs):
         if len(errors)
         else ""
     )
+
+    # Critical Format
     critical_fmt = (
         COLOR_PATTERN
         % (
@@ -125,6 +138,8 @@ def process(logs):
         if len(critical)
         else ""
     )
+
+    # Final Output Format
     _logger.info(
         """
 
