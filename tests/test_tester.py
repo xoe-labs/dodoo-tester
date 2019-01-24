@@ -28,12 +28,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from click.testing import CliRunner
 from future import standard_library
 
-from src.tester import main
+from src.tester import test
 
 standard_library.install_aliases()
 
 
-# from click_odoo import odoo
+# from dodoo import odoo
 
 
 # from ..utils import manifest, gitutils
@@ -41,7 +41,7 @@ standard_library.install_aliases()
 
 def test_execute_crm_tests(odoodb, odoocfg):
     result = CliRunner().invoke(
-        main,
+        test,
         [
             "--config",
             str(odoocfg),

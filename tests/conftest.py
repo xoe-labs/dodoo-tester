@@ -6,7 +6,7 @@ import subprocess
 import textwrap
 
 import pytest
-from click_odoo import odoo, odoo_bin
+from dodoo import odoo, odoo_bin
 from future import standard_library
 
 # Copyright 2018 ACSONE SA/NV (<http://acsone.eu>)

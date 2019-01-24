@@ -8,7 +8,7 @@ dodoo-tester
     :target: http://badge.fury.io/py/dodoo-tester
 
 ``dodoo-tester`` is a set of useful Odoo maintenance functions.
-They are available as CLI scripts (based on click-odoo_), as well
+They are available as CLI scripts (based on dodoo_), as well
 as composable python functions.
 
 .. contents::
@@ -48,7 +48,7 @@ Useful links
 - code repository: https://github.com/xoe-labs/dodoo-tester
 - report issues at: https://github.com/xoe-labs/dodoo-tester/issues
 
-.. _click-odoo: https://pypi.python.org/pypi/click-odoo
+.. _dodoo: https://pypi.python.org/pypi/dodoo
 
 Credits
 ~~~~~~~

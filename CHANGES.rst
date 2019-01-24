@@ -5,6 +5,10 @@ Future (?)
 ----------
 - pytest tools for BDD
 
+0.6.0 (2019-01-24)
+------------------
+- Refactor to dodoo plugin
+
 0.5.4 (2018-12-05)
 ------------------
 - Add addons-path option
