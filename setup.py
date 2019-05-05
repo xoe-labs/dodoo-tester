@@ -19,7 +19,12 @@ setup(
     use_scm_version=True,
     packages=find_packages(),
     setup_requires=["setuptools-scm"],
-    install_requires=["dodoo>=2.0.0.rc6", "future"],
+    install_requires=[
+        "dodoo>=2.0.0.rc6",
+        "future",
+        "pyyaml==3.12 ; python_version < '3.7'",
+        "pyyaml==3.13 ; python_version >= '3.7'",
+    ],
     license="LGPLv3+",
     author="XOE Labs",
     author_email="info@xoe.solutions",
