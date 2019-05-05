@@ -37,6 +37,6 @@ setup(
     ],
     entry_points="""
         [core_package.cli_plugins]
-        test=src.tester:test
+        test=dodoo_tester.cli:test
     """,
 )

@@ -28,7 +28,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from click.testing import CliRunner
 from future import standard_library
 
-from src.tester import test
+from dodoo_tester.cli import test
 
 standard_library.install_aliases()
 
