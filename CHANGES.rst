@@ -5,6 +5,12 @@ Future (?)
 ----------
 - pytest tools for BDD
 
+
+0.6.5 (2019-05-05)
+------------------
+- Simplify repo structure
+- Fix package namespace issues
+
 0.6.0 (2019-01-24)
 ------------------
 - Refactor to dodoo plugin
