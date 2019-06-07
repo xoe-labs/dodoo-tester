@@ -10,6 +10,10 @@ from future import standard_library
 standard_library.install_aliases()
 
 _logger = logging.getLogger(__name__)
+# Always output summary to standard err;
+# disregard odoo logging settings.
+_logger.handlers = []
+_logger.addHandler(logging.StreamHandler())
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, _NOTHING, DEFAULT = range(10)
 # The background is set with 40 plus the number of the color, and the foreground with 30
