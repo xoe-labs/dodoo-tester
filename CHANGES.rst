@@ -3,8 +3,11 @@ Changes
 
 Future (?)
 ----------
-- pytest tools for BDD
+- who knows...
 
+0.6.6 (2019-06-02)
+------------------
+- Inbclude camptocamp pytest tool for BDD
 
 0.6.5 (2019-05-05)
 ------------------

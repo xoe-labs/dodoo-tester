@@ -27,10 +27,12 @@ from builtins import str
 
 import click
 import dodoo
+import pytest as pytest_orig
 from future import standard_library
 
 from .commands import CommandWithOdooEnvExtended
-from .env import OdooTestExecution
+from .env import OdooPyTestExecution, OdooTestExecution
+from .pytest import OdooPlugin
 
 standard_library.install_aliases()
 
@@ -66,9 +68,25 @@ _logger = logging.getLogger(__name__)
 )
 @click.option("--tags", "-t", multiple=True, help="Filter on those test tags.")
 def test(env, git_dir, include, exclude, tags):
-    """ Run Odoo tests through modern pytest instead of unittest.
+    """ Run Odoo tests through unittest.
     """
     pass
+
+
+@click.command(
+    cls=dodoo.commands.CommandWithOdooEnv,
+    env_options={
+        "database_must_exist": True,
+        "environment_manager": OdooPyTestExecution,
+    },
+)
+@dodoo.options.addons_path_opt(True)
+@dodoo.options.db_opt(True)
+@click.argument("args", nargs=-1, required=True)
+def pytest(env, args):
+    """ Run Odoo tests through pytest.
+    """
+    pytest_orig.main(list(args), plugins=[OdooPlugin()])
 
 
 if __name__ == "__main__":  # pragma: no cover

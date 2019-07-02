@@ -21,14 +21,15 @@
 #
 
 # import mock
-
-# import click
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import os
+
 from click.testing import CliRunner
+from dodoo import odoo
 from future import standard_library
 
-from dodoo_tester.cli import test
+from dodoo_tester.cli import pytest, test
 
 standard_library.install_aliases()
 
@@ -54,5 +55,16 @@ def test_execute_crm_tests(odoodb, odoocfg):
             "--exclude",
             "project",
         ],
+    )
+    assert result.exit_code == 0
+
+
+def test_execute_pytest(odoodb, odoocfg):
+
+    testfile_path = os.path.join(
+        odoo.__path__[0], "addons", "base", "tests", "test_expression.py"
+    )
+    result = CliRunner().invoke(
+        pytest, ["--config", str(odoocfg), "--database", str(odoodb), testfile_path]
     )
     assert result.exit_code == 0

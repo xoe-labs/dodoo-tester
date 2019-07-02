@@ -43,5 +43,6 @@ setup(
     entry_points="""
         [core_package.cli_plugins]
         test=dodoo_tester.cli:test
+        pytest=dodoo_tester.cli:pytest
     """,
 )
