@@ -24,7 +24,7 @@ setup(
         "future",
         "pytest",
         "pyyaml==3.12 ; python_version < '3.7'",
-        "pyyaml==3.13 ; python_version >= '3.7'",
+        "pyyaml==5.1 ; python_version >= '3.7'",
     ],
     license="LGPLv3+",
     author="XOE Labs",
